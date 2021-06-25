@@ -12,7 +12,7 @@
 		</style>
 	</head>
 	<body>
-        <div id="WebGL-salida">
+        <div id="scene">
 
 		</div>
 		<script type="text/javascript">
@@ -38,9 +38,10 @@
 				scene.add(axes);
 
 				// Se crea el plano del suelo
-				var planeGeometry = new THREE.PlaneGeometry(60,20, 5, 5);
+				var planeGeometry = new THREE.PlaneGeometry(60,20, 8, 5);
 				//var planeMaterial = new THREE.MeshBasicMaterial({color: 0xcccccc});
 				var planeMaterial = new THREE.MeshLambertMaterial({color: 0xcccccc, wireframe: true, side: THREE.DoubleSide}); // Para los puntos de luz
+				createMountain(planeGeometry, 2, 3, 3)
 				var plane = new THREE.Mesh(planeGeometry,planeMaterial);
 				plane.receiveShadow = true; // El plano recive sombras
 
@@ -70,14 +71,18 @@
 				scene.add(spotLight);
 
 				// Añadir la salida de la renderización al elemento html
-				$("#WebGL-salida").append(renderer.domElement);
+				$("#scene").append(renderer.domElement);
 				render();
 
 				// Se renderiza la escena
 				function render() {
-
 					requestAnimationFrame(render);
 					renderer.render(scene, camera);
+				}
+
+				function createMountain(plane, x, y, z) {
+					let h = plane.parameters.widthSegments + 1;
+					planeGeometry.vertices[x*h+y].z = z;
 				}
 			});
 		</script>
