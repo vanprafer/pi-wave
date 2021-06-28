@@ -5,6 +5,7 @@
 		<title>Estructura básica de un proyecto three.js</title>
 		<script src="lib/three.js"></script>
 		<script src="lib/jquery-1.12.4.min.js"></script>
+		<script src="modelado.js"></script>
 
 		<style>
 			body { margin: 0;
@@ -12,79 +13,10 @@
 		</style>
 	</head>
 	<body>
-        <div id="scene">
+        <div id="scene"></div>
 
-		</div>
-		<script type="text/javascript">
-		//Una vez que todo ha sido cargado, ejecutamos nuestro contenido three.js
-			$(function () {
-
-				// Aquí va el contenido js
-				// Se crea una escena que contendrá los elementos: cámara, objetos...
-				var scene = new THREE.Scene();
-				
-				// Se creaa una camara que definde desde donde se mira
-				var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-
-				// Se crea un render y se configura el tamaño
-				var renderer = new THREE.WebGLRenderer();
-
-				renderer.setClearColor(new THREE.Color(0xEEEEEE));
-				renderer.setSize(window.innerWidth, window.innerHeight);
-				renderer.shadowMap.enabled = true; // Para que se rendericen las sombras
-				renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
-
-				var axes = new THREE.AxisHelper(20);
-				scene.add(axes);
-
-				// Se crea el plano del suelo
-				var planeGeometry = new THREE.PlaneGeometry(60,20, 8, 5);
-				//var planeMaterial = new THREE.MeshBasicMaterial({color: 0xcccccc});
-				var planeMaterial = new THREE.MeshLambertMaterial({color: 0xcccccc, wireframe: true, side: THREE.DoubleSide}); // Para los puntos de luz
-				createMountain(planeGeometry, 2, 3, 3)
-				var plane = new THREE.Mesh(planeGeometry,planeMaterial);
-				plane.receiveShadow = true; // El plano recive sombras
-
-				// Se rota y se posiciona el plano
-				plane.rotation.x = -0.5*Math.PI;
-				plane.position.y = 0;
-
-				// Se añade el plano a la escena
-				scene.add(plane);
-
-				// Se posiciona y apunta la cámara al centro de la escena
-				camera.position.x = -45;
-				camera.position.y = 7;
-				camera.position.z = 0;
-				camera.lookAt(scene.position);
-
-				// Añadimos spotlights para las sombras
-				var spotLight = new THREE.SpotLight(0xffffff, 0.8);
-				spotLight.position.set(-40,60,-10);
-				spotLight.castShadow = true;
-
-				spotLight.angle = Math.PI / 8.0;
-
-				spotLight.shadow.mapSize.width = 8000;
-				spotLight.shadow.mapSize.height = 8000;
-
-				scene.add(spotLight);
-
-				// Añadir la salida de la renderización al elemento html
-				$("#scene").append(renderer.domElement);
-				render();
-
-				// Se renderiza la escena
-				function render() {
-					requestAnimationFrame(render);
-					renderer.render(scene, camera);
-				}
-
-				function createMountain(plane, x, y, z) {
-					let h = plane.parameters.widthSegments + 1;
-					planeGeometry.vertices[x*h+y].z = z;
-				}
-			});
+		<script>
+			init("scene", 1000, 1000);
 		</script>
     </body>
 </html>
