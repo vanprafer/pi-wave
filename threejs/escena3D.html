@@ -5,7 +5,10 @@
 		<title>Estructura básica de un proyecto three.js</title>
 		<script src="lib/three.js"></script>
 		<script src="lib/jquery-1.12.4.min.js"></script>
+		<script src="lib/wavesurfer.min.js"></script>
+		<script src="lib/wavesurfer.spectrogram.min.js"></script>
 		<script src="modelado.js"></script>
+		
 
 		<style>
 			body { margin: 0;
@@ -14,9 +17,13 @@
 	</head>
 	<body>
         <div id="scene"></div>
+		<div id="waveform"></div>
+		<div id="wave-spectrogram"></div>
 
 		<script>
-			init("scene", 1000, 1000);
+			//init("scene", 1000, 1000, 0.1);
+			
 		</script>
+		<script src="audio.js"></script>
     </body>
 </html>

@@ -9,18 +9,12 @@ var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHei
 // Se crea un render y se configura el tamaño
 var renderer = new THREE.WebGLRenderer();
 
-// Se renderiza la escena
-function render() {
-    requestAnimationFrame(render);
-    renderer.render(scene, camera);
-}
-
 function createMountain(plane, x, y, z) {
     let h = plane.parameters.widthSegments + 1;
     plane.vertices[x*h+y].z = z;
 }
 
-function init(id, l, nDiv) {
+function init(id, l, nDiv, vel) {
 
     renderer.setClearColor(new THREE.Color(0xEEEEEE));
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -62,6 +56,14 @@ function init(id, l, nDiv) {
     spotLight.shadow.mapSize.height = 8000;
 
     scene.add(spotLight);
+
+    // Se renderiza la escena
+    function render() {
+        plane.position.x -= vel;
+
+        requestAnimationFrame(render);
+        renderer.render(scene, camera);
+    }
 
     // Añadir la salida de la renderización al elemento html
     $("#" + id).append(renderer.domElement);
