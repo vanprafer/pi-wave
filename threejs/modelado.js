@@ -14,9 +14,9 @@ function createMountain(plane, x, y, z) {
     plane.vertices[x*h+y].z = z;
 }
 
-function init(id, l, nDiv, vel) {
+function init(id, l, nDiv, vel, spect) {
 
-    renderer.setClearColor(new THREE.Color(0xEEEEEE));
+    renderer.setClearColor(new THREE.Color(0x5d005c));
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMap.enabled = true; // Para que se rendericen las sombras
     renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
@@ -26,9 +26,36 @@ function init(id, l, nDiv, vel) {
 
     // Se crea el plano del suelo
     var planeGeometry = new THREE.PlaneGeometry(l, 20, nDiv, 100); // width, height, widthSegments, heightSegments
-    var planeMaterial = new THREE.MeshLambertMaterial({color: 0xcccccc, wireframe: true, side: THREE.DoubleSide}); // Para los puntos de luz
-    createMountain(planeGeometry, 2, 3, 3)
+
+    var planeMaterial = new THREE.MeshLambertMaterial({
+        color: 0x4700bc, 
+        side: THREE.DoubleSide,
+        polygonOffset: true,
+        polygonOffsetFactor: 1, 
+        polygonOffsetUnits: 1
+    }); // Para los puntos de luz
+    
+    // j es x, i es y
+    for(let i = 0; i < nDiv+1; i ++) {
+        for(let j = 0; j < 101; j ++) {
+            let z = (255 - spect.data[(j * ((nDiv + 1) * 4)) + (i * 4)]) / 50; // Aqui la x y la y se intercambian porque el espectrograma esta rotado 90 grados
+            createMountain(planeGeometry, j, i, z);
+        }
+    }
+
+    planeGeometry.computeFaceNormals();
+    planeGeometry.computeVertexNormals();
+    
     var plane = new THREE.Mesh(planeGeometry,planeMaterial);
+    
+    let wireframeGeometry = new THREE.WireframeGeometry(planeGeometry);
+    let wireframeMaterial = new THREE.LineBasicMaterial({color: 0x55c9ff});
+    let wireframe = new THREE.LineSegments(wireframeGeometry, wireframeMaterial);
+
+    plane.add(wireframe);
+    scene.fog = new THREE.FogExp2(new THREE.Color(0x5d005c), 0.05)
+    //THREE.Fog(new THREE.Color(0xffffff), 0.0025, 20);
+
     plane.receiveShadow = true; // El plano recive sombras
 
     // Se rota y se posiciona el plano
@@ -41,9 +68,9 @@ function init(id, l, nDiv, vel) {
 
     // Se posiciona y apunta la cámara al centro de la escena
     camera.position.x = -11;
-    camera.position.y = 7;
+    camera.position.y = 4;
     camera.position.z = 0;
-    camera.lookAt(5,0,0);
+    camera.lookAt(l,0,0);
 
     // Añadimos spotlights para las sombras
     var spotLight = new THREE.SpotLight(0xffffff, 0.8);
