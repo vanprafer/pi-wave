@@ -25,8 +25,8 @@ function init(id, l, nDiv, vel, spect) {
     scene.add(axes);
 
     // Se crea el plano del suelo
-    var planeGeometry = new THREE.PlaneGeometry(l, 20, nDiv, 100); // width, height, widthSegments, heightSegments
-
+    var planeGeometry = new THREE.PlaneGeometry(l, 20, nDiv, 50); // width, height, widthSegments, heightSegments
+    console.log(nDiv);
     var planeMaterial = new THREE.MeshLambertMaterial({
         color: 0x4700bc, 
         side: THREE.DoubleSide,
@@ -34,10 +34,10 @@ function init(id, l, nDiv, vel, spect) {
         polygonOffsetFactor: 1, 
         polygonOffsetUnits: 1
     }); // Para los puntos de luz
-    
+    console.log(spect)
     // j es x, i es y
     for(let i = 0; i < nDiv+1; i ++) {
-        for(let j = 0; j < 101; j ++) {
+        for(let j = 0; j < 51; j ++) {
             let z = (255 - spect.data[(j * ((nDiv + 1) * 4)) + (i * 4)]) / 50; // Aqui la x y la y se intercambian porque el espectrograma esta rotado 90 grados
             createMountain(planeGeometry, j, i, z);
         }
@@ -53,7 +53,7 @@ function init(id, l, nDiv, vel, spect) {
     let wireframe = new THREE.LineSegments(wireframeGeometry, wireframeMaterial);
 
     plane.add(wireframe);
-    scene.fog = new THREE.FogExp2(new THREE.Color(0x5d005c), 0.05)
+    scene.fog = new THREE.FogExp2(new THREE.Color(0x5d005c), 0.03)
     //THREE.Fog(new THREE.Color(0xffffff), 0.0025, 20);
 
     plane.receiveShadow = true; // El plano recive sombras
@@ -65,6 +65,16 @@ function init(id, l, nDiv, vel, spect) {
 
     // Se añade el plano a la escena
     scene.add(plane);
+
+    // Luna
+    let moonGeometry = new THREE.SphereGeometry(20, 30, 30);
+    let moonMaterial = new THREE.MeshBasicMaterial({color: 0xe1e1e1, wireframe: true, fog: false});
+    let moon = new THREE.Mesh(moonGeometry, moonMaterial);
+    
+    moon.position.x = 50;
+    moon.position.y = 4;
+
+    scene.add(moon);
 
     // Se posiciona y apunta la cámara al centro de la escena
     camera.position.x = -11;
@@ -87,6 +97,7 @@ function init(id, l, nDiv, vel, spect) {
     // Se renderiza la escena
     function render() {
         plane.position.x -= vel;
+        moon.rotation.y += 0.0005;
 
         requestAnimationFrame(render);
         renderer.render(scene, camera);

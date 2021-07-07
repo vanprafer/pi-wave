@@ -7,14 +7,21 @@ var wavesurfer = WaveSurfer.create({
 });
 
 var img = new Image();
+img.crossOrigin = "anonymous";
+
+var duration = 0;
+
+// -----------------------------------------------------------------------------------------------------------
+// REDIMENSION DE IMAGEN
+// -----------------------------------------------------------------------------------------------------------
 
 // Cuando img cambia, se ejecuta la funcion. Se sabe que va a cambiar unicamente cuando el espectrograma este cargado
 img.onload = function () {
   let resizedCanvas = document.createElement('canvas');
   let ctx = resizedCanvas.getContext('2d'); // Permite dibujar dentro del canvas y acceder a la informacion
 
-  resizedCanvas.width = 1001;
-  resizedCanvas.height = 101;
+  resizedCanvas.width = duration * 10 + 1;
+  resizedCanvas.height = 51;
   // se dibuja la imagen escalada en un canvas a raiz del contexto
   // todos los canvas tienen un contexto y a partir de el se dibuja
   ctx.drawImage(img, 0, 0, resizedCanvas.width, resizedCanvas.height);
@@ -24,11 +31,18 @@ img.onload = function () {
   //[((y * (w * 4)) + (x * 4)) + 2]
   let data = ctx.getImageData(0, 0, resizedCanvas.width, resizedCanvas.height);
 
-  init("scene", 1000, 1000, 0.2, data);  
+  //Iniciacion de escena
+  init("scene", Math.floor(0.4 * duration * 10), Math.floor(duration * 10), 0.05, data);  
 }
 
 // Cuando se inicializa wavesurfer, se ejecuta la funcion
-wavesurfer.on('ready', function () {
+var body = $("body")[0];
+
+// -----------------------------------------------------------------------------------------------------------
+// CALCULO DE ESPECTROGRAMA
+// -----------------------------------------------------------------------------------------------------------
+
+wavesurfer.on('ready', function () {  
   let spectrogram = Object.create(WaveSurfer.Spectrogram);
   spectrogram.init({
     wavesurfer: wavesurfer,
@@ -38,22 +52,46 @@ wavesurfer.on('ready', function () {
 
   let canvas = $("#wave-spectrogram canvas")[0]; //Toma el elemento "canvas" dentro del elemento con id "wave-spectrogram"
 
-  img.src = canvas.toDataURL();
+  body.style.width = "";
+
+  img.src = canvas.toDataURL(); //Cambiar por otra equivalente
+
+  //window.open(canvas.toDataURL(), '_blank');
 
   $("#waveform").remove();
   $("#wave-spectrogram").remove();
   $("#fileinput").remove();
 });
 
+// -----------------------------------------------------------------------------------------------------------
+// CARGA DE ARCHIVOS
+// -----------------------------------------------------------------------------------------------------------
+
 $("#fileinput")[0].onchange = function () {
+
   let file = this.files[0];
 
   if (file) {
       let reader = new FileReader();
+      // Cojo lo primero y si no esta disponible, cojo lo segundo. Despues llamo al resultado
+      let audioContext = new (window.AudioContext || window.webkitAudioContext)() 
       
-      reader.onload = function (evt) {
-          let blob = new window.Blob([new Uint8Array(evt.target.result)]);
-          wavesurfer.loadBlob(blob);
+      reader.onload = function (audioData) {
+        let audioDataCopy = new Uint8Array(audioData.target.result);
+        let blob = new window.Blob([audioDataCopy]);
+        
+        // Promesa -> Cuando tenga lugar, se ejecuta lo de dentro del then
+        blob.arrayBuffer().then(function(array) {
+          audioContext.decodeAudioData(array, function(data) {
+            duration = data.duration;
+            // El espectrograma se crea a 1.25 * nPixeles del body (no se por que) TODO
+            let nPix = duration * 10 / 1.25;
+            body.style.width = nPix + "px";
+            
+            // Blob son datos, en este caso del audio
+            wavesurfer.loadBlob(blob);
+          })
+        })
       };
 
       reader.readAsArrayBuffer(file);
