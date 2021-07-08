@@ -16,13 +16,10 @@ function createMountain(plane, x, y, z) {
 
 function init(id, l, nDiv, vel, spect) {
 
-    renderer.setClearColor(new THREE.Color(0x5d005c));
+    renderer.setClearColor(new THREE.Color(0x1f1f1f));
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMap.enabled = true; // Para que se rendericen las sombras
     renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
-
-    var axes = new THREE.AxisHelper(20);
-    scene.add(axes);
 
     // Se crea el plano del suelo
     var planeGeometry = new THREE.PlaneGeometry(l, 20, nDiv, 50); // width, height, widthSegments, heightSegments
@@ -53,10 +50,9 @@ function init(id, l, nDiv, vel, spect) {
     let wireframe = new THREE.LineSegments(wireframeGeometry, wireframeMaterial);
 
     plane.add(wireframe);
-    scene.fog = new THREE.FogExp2(new THREE.Color(0x5d005c), 0.03)
-    //THREE.Fog(new THREE.Color(0xffffff), 0.0025, 20);
+    scene.fog = new THREE.FogExp2(new THREE.Color(0x1f1f1f), 0.03)
 
-    plane.receiveShadow = true; // El plano recive sombras
+    plane.receiveShadow = true; // El plano recibe sombras
 
     // Se rota y se posiciona el plano
     plane.rotation.x = -0.5*Math.PI;
@@ -68,7 +64,7 @@ function init(id, l, nDiv, vel, spect) {
 
     // Luna
     let moonGeometry = new THREE.SphereGeometry(20, 30, 30);
-    let moonMaterial = new THREE.MeshBasicMaterial({color: 0xe1e1e1, wireframe: true, fog: false});
+    let moonMaterial = new THREE.MeshBasicMaterial({color: 0x5d005c, wireframe: true, fog: false});
     let moon = new THREE.Mesh(moonGeometry, moonMaterial);
     
     moon.position.x = 50;
@@ -96,7 +92,7 @@ function init(id, l, nDiv, vel, spect) {
 
     // Se renderiza la escena
     function render() {
-        plane.position.x -= vel;
+        plane.position.x = l/2 - songProgress()*l;
         moon.rotation.y += 0.0005;
 
         requestAnimationFrame(render);

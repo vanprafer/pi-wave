@@ -1,0 +1,54 @@
+@font-face {
+    font-family: 'future_n0t_foundregular';
+    src: url('../fonts/future_n0t_found_regular-webfont.woff2') format('woff2'),
+         url('../fonts/future_n0t_found_regular-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+body { 
+    margin: 0;
+    overflow: hidden;
+    background-color: #1f1f1f;
+}
+
+.audio-menu {
+    border: 2px solid #5d005c;
+    border-radius: 0.5em;
+    color: white;
+    background-color: #1f1f1f;
+    width: 20vw;
+    height: 7vh;
+    position: sticky;
+    overflow: hidden;
+    top: 2em;
+    left: 1em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5em;
+}
+
+.buttons {
+    display: flex;
+    position: fixed;
+    top: 5.2em;
+    width: 20vw;
+}
+
+#song-name {
+    font-family: "future_n0t_foundregular";
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.buttons button {
+    color: #4700bc;
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    -webkit-text-stroke: 1px #55c9ff;
+}
+

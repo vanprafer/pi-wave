@@ -11,6 +11,10 @@ img.crossOrigin = "anonymous";
 
 var duration = 0;
 
+var audio;
+
+var songName;
+
 // -----------------------------------------------------------------------------------------------------------
 // REDIMENSION DE IMAGEN
 // -----------------------------------------------------------------------------------------------------------
@@ -61,6 +65,7 @@ wavesurfer.on('ready', function () {
   $("#waveform").remove();
   $("#wave-spectrogram").remove();
   $("#fileinput").remove();
+  $("#song-name")[0].innerHTML = songName;
 });
 
 // -----------------------------------------------------------------------------------------------------------
@@ -71,6 +76,8 @@ $("#fileinput")[0].onchange = function () {
 
   let file = this.files[0];
 
+  songName = file.name;
+
   if (file) {
       let reader = new FileReader();
       // Cojo lo primero y si no esta disponible, cojo lo segundo. Despues llamo al resultado
@@ -80,6 +87,10 @@ $("#fileinput")[0].onchange = function () {
         let audioDataCopy = new Uint8Array(audioData.target.result);
         let blob = new window.Blob([audioDataCopy]);
         
+        //Se carga el audio
+        let blobUrl = URL.createObjectURL(blob);
+        audio = new Audio(blobUrl);
+
         // Promesa -> Cuando tenga lugar, se ejecuta lo de dentro del then
         blob.arrayBuffer().then(function(array) {
           audioContext.decodeAudioData(array, function(data) {
@@ -99,3 +110,24 @@ $("#fileinput")[0].onchange = function () {
 }
 
 //wavesurfer.load('https://wavesurfer-js.org/example/media/demo.wav');
+
+// -----------------------------------------------------------------------------------------------------------
+// CONTROLES DE AUDIO
+// -----------------------------------------------------------------------------------------------------------
+
+function playAudio() {
+  audio.play();
+} 
+
+function stopAudio() {
+  audio.pause();
+}
+
+function restartAudio() {
+  audio.currentTime = 0;
+  stopAudio();
+}
+
+function songProgress() {
+  return Math.min(audio.currentTime/duration,1);
+}
