@@ -7,6 +7,52 @@
 
 }
 
+@font-face {
+    font-family: 'forced-square';
+    src: url('../fonts/forced_square-webfont.woff2') format('woff2'),
+        url('../fonts/forced_square-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.logo svg {
+    position: absolute;
+    top: 5vh;
+    left: calc(50vw - 7%);
+    width: 14%;
+}
+
+.wave-text {
+    font-family: "forced-square";
+
+    position: absolute;
+    font-size: 2.5em;
+    color: #55c9ff;
+    -webkit-text-stroke: 4px #5d005c;
+    top: 7.3vh;
+    left: calc(51.3vw - 3%);
+    width: 6%;
+    opacity: 0;
+    transition-property: opacity;
+    transition-duration: 1s;
+}
+
+.wave-text-black {
+    font-family: "forced-square";
+
+    position: absolute;
+    font-size: 2.5em;
+    color: #55c9ff;
+    -webkit-text-stroke: 1.5px #000000;
+    top: 7.3vh;
+    left: calc(51.3vw - 3%);
+    width: 6%;
+    opacity: 0;
+    transition-property: opacity;
+    transition-duration: 1s;
+}
+
+
 body { 
     margin: 0;
     overflow: hidden;
