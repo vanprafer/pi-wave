@@ -1,0 +1,11 @@
+{
+  "name": "pi-wave",
+  "version": "1.0.0",
+  "description": "This is so cool.",
+  "main": "server.js",
+  "author": "vanessa-pradas",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "license": "MIT"
+}

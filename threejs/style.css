@@ -1,7 +1,7 @@
 @font-face {
     font-family: 'future_n0t_foundregular';
-    src: url('../fonts/future_n0t_found_regular-webfont.woff2') format('woff2'),
-         url('../fonts/future_n0t_found_regular-webfont.woff') format('woff');
+    src: url('fonts/future_n0t_found_regular-webfont.woff2') format('woff2'),
+         url('fonts/future_n0t_found_regular-webfont.woff') format('woff');
     font-weight: normal;
     font-style: normal;
 
@@ -9,8 +9,8 @@
 
 @font-face {
     font-family: 'forced-square';
-    src: url('../fonts/forced_square-webfont.woff2') format('woff2'),
-        url('../fonts/forced_square-webfont.woff') format('woff');
+    src: url('fonts/forced_square-webfont.woff2') format('woff2'),
+        url('fonts/forced_square-webfont.woff') format('woff');
     font-weight: normal;
     font-style: normal;
 }

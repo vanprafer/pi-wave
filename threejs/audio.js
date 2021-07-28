@@ -60,7 +60,7 @@ wavesurfer.on('ready', function () {
 
   img.src = canvas.toDataURL(); //Cambiar por otra equivalente
 
-  //window.open(canvas.toDataURL(), '_blank');
+  window.open(canvas.toDataURL(), '_blank');
 
   $("#waveform").remove();
   $("#wave-spectrogram").remove();
