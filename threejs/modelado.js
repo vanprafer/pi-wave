@@ -23,7 +23,7 @@ function init(id, l, nDiv, vel, spect) {
 
     // Se crea el plano del suelo
     var planeGeometry = new THREE.PlaneGeometry(l, 20, nDiv, 50); // width, height, widthSegments, heightSegments
-    console.log(nDiv);
+    
     var planeMaterial = new THREE.MeshLambertMaterial({
         color: 0x4700bc, 
         side: THREE.DoubleSide,
@@ -31,7 +31,7 @@ function init(id, l, nDiv, vel, spect) {
         polygonOffsetFactor: 1, 
         polygonOffsetUnits: 1
     }); // Para los puntos de luz
-    console.log(spect)
+    
     // j es x, i es y
     for(let i = 0; i < nDiv+1; i ++) {
         for(let j = 0; j < 51; j ++) {
@@ -90,10 +90,24 @@ function init(id, l, nDiv, vel, spect) {
 
     scene.add(spotLight);
 
+    let imgArea = $(".spect")[0];
+    let imgSpect = $("#imgSpect")[0];
+
+    let x; 
+    let y; 
+    imgArea.style.display = "inherit";
+    
+    setTimeout(function() {
+        x = imgArea.getBoundingClientRect().width;
+        y = imgSpect.getBoundingClientRect().width;  
+    }, 0); 
+
     // Se renderiza la escena
     function render() {
         plane.position.x = l/2 - songProgress()*l;
         moon.rotation.y += 0.0005;
+
+        imgSpect.style.marginLeft = (x/2 - y*songProgress()) + "px";
 
         requestAnimationFrame(render);
         renderer.render(scene, camera);

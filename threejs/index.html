@@ -35,6 +35,11 @@
 		<div class="wave-text-black">
             Wave
         </div>
+        <div class="spect">
+            <div class="foreground"></div>
+            <div class="line"></div>
+            <img id="imgSpect" src="" alt="">
+        </div>
 		<div class="audio-menu">
 			<input type="file" id="fileinput"/>
 			<div id="song-name"></div>
@@ -42,6 +47,9 @@
 				<button onclick="stopAudio()"><i class="fas fa-pause-circle"></i></button>
 				<button onclick="playAudio()"><i class="fas fa-play-circle"></i></button>
 				<button onclick="restartAudio()"><i class="fas fa-stop-circle"></i></button>
+                <button onclick="slowerAudio()"><i class="fas fa-chevron-circle-left"></i></button>
+                <button onclick="fasterAudio()"><i class="fas fa-chevron-circle-right"></i></button>
+                <button onclick="location.reload()"><i class="fas fa-plus-circle"></i></button>
 			</div>
 		</div>
         <div id="scene"></div>

@@ -59,6 +59,36 @@ body {
     background-color: #1f1f1f;
 }
 
+.spect {
+    position: absolute;
+    top: 5vh;
+    right: 3em;
+    width: 30vw; 
+    height: 12vh;
+    overflow: hidden;
+    display: none;
+}
+
+.foreground {
+    background: linear-gradient(90deg, #1f1f1f 0%, rgba(255,255,255,0) 30%, rgba(255,255,255,0) 70%, #1f1f1f 100%);
+    width: 30vw; 
+    height: 12vh;
+    z-index: 100;
+    position: inherit;
+}
+
+.line {
+    width: 2px;
+    height: 12vh;
+    background-color: red;
+    position: absolute;
+    left: calc(15vw - 1px);
+}
+
+.spect img {
+    height: 12vh;
+}
+
 .audio-menu {
     border: 2px solid #5d005c;
     border-radius: 0.5em;

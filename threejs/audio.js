@@ -26,9 +26,12 @@ img.onload = function () {
 
   resizedCanvas.width = duration * 10 + 1;
   resizedCanvas.height = 51;
+  
   // se dibuja la imagen escalada en un canvas a raiz del contexto
   // todos los canvas tienen un contexto y a partir de el se dibuja
   ctx.drawImage(img, 0, 0, resizedCanvas.width, resizedCanvas.height);
+
+  $("#imgSpect")[0].src = resizedCanvas.toDataURL(); //Todas las img tienen un src, yo tomo la primera img de jquery con ese id (en este caso, la única) y modifico su src
 
   //window.open(resizedCanvas.toDataURL(), '_blank');
 
@@ -60,7 +63,7 @@ wavesurfer.on('ready', function () {
 
   img.src = canvas.toDataURL(); //Cambiar por otra equivalente
 
-  window.open(canvas.toDataURL(), '_blank');
+//  window.open(canvas.toDataURL(), '_blank');
 
   $("#waveform").remove();
   $("#wave-spectrogram").remove();
@@ -129,5 +132,13 @@ function restartAudio() {
 }
 
 function songProgress() {
-  return Math.min(audio.currentTime/duration,1);
+  return Math.min(audio.currentTime/duration, 1);
+}
+
+function fasterAudio() {
+  audio.playbackRate = Math.min(audio.playbackRate + 0.25, 4);
+}
+
+function slowerAudio() {
+  audio.playbackRate = Math.max(audio.playbackRate - 0.25, 0.25);
 }
