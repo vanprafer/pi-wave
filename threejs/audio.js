@@ -68,7 +68,27 @@ wavesurfer.on('ready', function () {
   $("#waveform").remove();
   $("#wave-spectrogram").remove();
   $("#fileinput").remove();
-  $("#song-name")[0].innerHTML = songName;
+  $("#song-name")[0].innerHTML = songName + " · ";
+  $("title")[0].innerHTML += " · " + songName + " · ";
+
+  // setInterval ejecuta un trozo de código (función) cada x milisegundos (segundo parámetro)
+  setInterval(function () {
+    let elem = $("#song-name")[0]; // Coges el elemento
+    let text = elem.innerHTML; // Cogemos el texto de dentro
+
+    text = text.substr(1) + text[0]; // Ponemos el primer caracter al final
+
+    elem.innerHTML = text; //Volvemos a asignárselo al div 
+  }, 200);
+
+  setInterval(function () {
+    let elem = $("title")[0];
+    let text = elem.innerHTML; 
+
+    text = text.substr(1) + text[0]; 
+
+    elem.innerHTML = text; 
+  }, 200);
 });
 
 // -----------------------------------------------------------------------------------------------------------
@@ -128,6 +148,7 @@ function stopAudio() {
 
 function restartAudio() {
   audio.currentTime = 0;
+  audio.playbackRate = 1;
   stopAudio();
 }
 

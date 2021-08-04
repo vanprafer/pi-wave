@@ -116,7 +116,7 @@ body {
 #song-name {
     font-family: "future_n0t_foundregular";
     white-space: nowrap;
-    text-overflow: ellipsis;
+    text-overflow: clip;
     overflow: hidden;
 }
 
