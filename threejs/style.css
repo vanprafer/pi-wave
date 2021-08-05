@@ -35,6 +35,7 @@
     opacity: 0;
     transition-property: opacity;
     transition-duration: 1s;
+    user-select: none;
 }
 
 .wave-text-black {
@@ -50,6 +51,7 @@
     opacity: 0;
     transition-property: opacity;
     transition-duration: 1s;
+    user-select: none;
 }
 
 #waveform {
