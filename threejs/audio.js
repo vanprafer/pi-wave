@@ -65,9 +65,9 @@ wavesurfer.on('ready', function () {
 
 //  window.open(canvas.toDataURL(), '_blank');
 
-  $("#waveform").remove();
-  $("#wave-spectrogram").remove();
-  $("#fileinput").remove();
+//  $("#waveform").remove();
+//  $("#wave-spectrogram").remove();
+//  $("#fileinput").remove();
   $("#song-name")[0].innerHTML = songName + " · ";
   $("title")[0].innerHTML += " · " + songName + " · ";
 
@@ -153,7 +153,11 @@ function restartAudio() {
 }
 
 function songProgress() {
-  return Math.min(audio.currentTime/duration, 1);
+  if(audio) {
+    return Math.min(audio.currentTime/duration, 1);
+  } else { // Cuando no hay canción, el valor del songProgress siempre es cero
+    return 0;
+  }
 }
 
 function fasterAudio() {

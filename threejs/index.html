@@ -43,14 +43,14 @@
         </div>
 		<div class="audio-menu">
 			<input type="file" id="fileinput"/>
-			<div id="song-name"></div>
+			<div id="song-name">Click the + button to upload</div>
 			<div class="buttons">
 				<button onclick="stopAudio()"><i class="fas fa-pause-circle"></i></button>
 				<button onclick="playAudio()"><i class="fas fa-play-circle"></i></button>
 				<button onclick="restartAudio()"><i class="fas fa-stop-circle"></i></button>
                 <button onclick="slowerAudio()"><i class="fas fa-chevron-circle-left"></i></button>
                 <button onclick="fasterAudio()"><i class="fas fa-chevron-circle-right"></i></button>
-                <button onclick="location.reload()"><i class="fas fa-plus-circle"></i></button>
+                <button><label for="fileinput"><i class="fas fa-plus-circle"></i></label></button>
 			</div>
 		</div>
         <div id="scene"></div>
@@ -89,6 +89,10 @@
             }
 			
             drawSVGPaths($('svg'), 1000, 1500, 50);
+        </script>
+        <script>
+            duration = 300;
+            init("scene", Math.floor(0.4 * duration * 10), Math.floor(duration * 10), 0.05, false);
         </script>
     </body>
 </html>

@@ -15,7 +15,7 @@ function createMountain(plane, x, y, z) {
 }
 
 function init(id, l, nDiv, vel, spect) {
-
+    scene.remove.apply(scene, scene.children);
     renderer.setClearColor(new THREE.Color(0x1f1f1f));
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMap.enabled = true; // Para que se rendericen las sombras
@@ -32,16 +32,18 @@ function init(id, l, nDiv, vel, spect) {
         polygonOffsetUnits: 1
     }); // Para los puntos de luz
     
-    // j es x, i es y
-    for(let i = 0; i < nDiv+1; i ++) {
-        for(let j = 0; j < 51; j ++) {
-            let z = (255 - spect.data[(j * ((nDiv + 1) * 4)) + (i * 4)]) / 50; // Aqui la x y la y se intercambian porque el espectrograma esta rotado 90 grados
-            createMountain(planeGeometry, j, i, z);
+    // Si hay espectrograma, crea relieve
+    if(spect) { // array en js es true si lleva elementos dentro (truthy)
+        // j es x, i es y
+        for(let i = 0; i < nDiv+1; i ++) {
+            for(let j = 0; j < 51; j ++) {
+                let z = (255 - spect.data[(j * ((nDiv + 1) * 4)) + (i * 4)]) / 50; // Aqui la x y la y se intercambian porque el espectrograma esta rotado 90 grados
+                createMountain(planeGeometry, j, i, z);
+            }
         }
+        planeGeometry.computeFaceNormals();
+        planeGeometry.computeVertexNormals();
     }
-
-    planeGeometry.computeFaceNormals();
-    planeGeometry.computeVertexNormals();
     
     var plane = new THREE.Mesh(planeGeometry,planeMaterial);
     
@@ -95,8 +97,13 @@ function init(id, l, nDiv, vel, spect) {
 
     let x; 
     let y; 
-    imgArea.style.display = "inherit";
+
+    // Necesitamos que la línea roja salga cuando exista espectrograma
+    if(spect) {
+        imgArea.style.display = "inherit";
+    }
     
+    //Espera a que el espectrograma se cargue y luego lo mide
     setTimeout(function() {
         x = imgArea.getBoundingClientRect().width;
         y = imgSpect.getBoundingClientRect().width;  

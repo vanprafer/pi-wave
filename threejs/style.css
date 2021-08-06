@@ -137,3 +137,7 @@ body {
     -webkit-text-stroke: 1px #55c9ff;
 }
 
+#fileinput {
+    display: none;
+}
+
