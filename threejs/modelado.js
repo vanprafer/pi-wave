@@ -1,3 +1,5 @@
+import * as THREE from './lib/three.module.js';
+import songProgress from './audio.js';
 
 // Aquí va el contenido js
 // Se crea una escena que contendrá los elementos: cámara, objetos...
@@ -9,13 +11,20 @@ var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHei
 // Se crea un render y se configura el tamaño
 var renderer = new THREE.WebGLRenderer();
 
+// Variable astronauta
+var astronaut;
+var movement;
+var clock = new THREE.Clock();
+
 function createMountain(plane, x, y, z) {
     let h = plane.parameters.widthSegments + 1;
-    plane.vertices[x*h+y].z = z;
+    plane.attributes.position.array[3 * (x * h + y) + 2] = z;
 }
 
-function init(id, l, nDiv, vel, spect) {
-    scene.remove.apply(scene, scene.children);
+export default function init(id, l, nDiv, vel, spect) {
+    while(scene.children.length > 0){ 
+        scene.remove(scene.children[0]); 
+    }
     renderer.setClearColor(new THREE.Color(0x1f1f1f));
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMap.enabled = true; // Para que se rendericen las sombras
@@ -23,7 +32,7 @@ function init(id, l, nDiv, vel, spect) {
 
     // Se crea el plano del suelo
     var planeGeometry = new THREE.PlaneGeometry(l, 20, nDiv, 50); // width, height, widthSegments, heightSegments
-    
+
     var planeMaterial = new THREE.MeshLambertMaterial({
         color: 0x4700bc, 
         side: THREE.DoubleSide,
@@ -74,8 +83,22 @@ function init(id, l, nDiv, vel, spect) {
 
     scene.add(moon);
 
+    // Se añade el astronauta a la escena
+    if(astronaut) {
+        astronaut.scene.scale.set(0.01,0.01,0.01);
+        astronaut.scene.position.set(0,6,0);
+        scene.add(astronaut.scene);
+    
+        movement = new THREE.AnimationMixer(astronaut.scene);
+        
+        astronaut.animations.forEach(function(frame) {
+            movement.clipAction(frame).play();
+        }); 
+        console.log(astronaut);
+    }
+
     // Se posiciona y apunta la cámara al centro de la escena
-    camera.position.x = -11;
+    camera.position.x = -14;
     camera.position.y = 4;
     camera.position.z = 0;
     camera.lookAt(l,0,0);
@@ -109,14 +132,22 @@ function init(id, l, nDiv, vel, spect) {
         y = imgSpect.getBoundingClientRect().width;  
     }, 0); 
 
+    let number = 0;
+
     // Se renderiza la escena
     function render() {
         plane.position.x = l/2 - songProgress()*l;
         moon.rotation.y += 0.0005;
 
+        number += 0.05;
+        astronaut.scene.position.y = Math.cos(number)/2 + 5;
+
         imgSpect.style.marginLeft = (x/2 - y*songProgress()) + "px";
 
         requestAnimationFrame(render);
+        var delta = clock.getDelta();
+  
+        movement.update(delta);
         renderer.render(scene, camera);
     }
 
@@ -124,3 +155,18 @@ function init(id, l, nDiv, vel, spect) {
     $("#" + id).append(renderer.domElement);
     render();
 }
+
+import * as GLTF from "./lib/GLTFLoader.js";
+
+let loader = new GLTF.GLTFLoader();
+loader.load("./models/scene.gltf", function(model) {
+    astronaut = model;
+
+    let duration = 300;
+    init("scene", Math.floor(0.4 * duration * 10), Math.floor(duration * 10), 0.05, false);
+}, function() {
+
+}, function(error) {
+    console.log(error);
+});
+

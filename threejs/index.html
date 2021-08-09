@@ -6,12 +6,12 @@
 		<link rel="stylesheet" type="text/css" href="style.css">
 		<meta charset="utf-8">
 		<title>Π-Wave</title>
-		<script src="lib/three.js"></script>
+        <script src="lib/math.js"></script>
 		<script src="lib/jquery-1.12.4.min.js"></script>
 		<script src="lib/jquery-ui.min.js"></script>
 		<script src="lib/wavesurfer.min.js"></script>
 		<script src="lib/wavesurfer.spectrogram.min.js"></script>
-		<script src="modelado.js"></script>
+		<script src="modelado.js" type="module"></script>
 	</head>
 	<body>
 		<div class="logo">
@@ -45,11 +45,11 @@
 			<input type="file" id="fileinput"/>
 			<div id="song-name">Click the + button to upload</div>
 			<div class="buttons">
-				<button onclick="stopAudio()"><i class="fas fa-pause-circle"></i></button>
-				<button onclick="playAudio()"><i class="fas fa-play-circle"></i></button>
-				<button onclick="restartAudio()"><i class="fas fa-stop-circle"></i></button>
-                <button onclick="slowerAudio()"><i class="fas fa-chevron-circle-left"></i></button>
-                <button onclick="fasterAudio()"><i class="fas fa-chevron-circle-right"></i></button>
+				<button id="pauseAudio"><i class="fas fa-pause-circle"></i></button>
+				<button id="playAudio"><i class="fas fa-play-circle"></i></button>
+				<button id="restartAudio"><i class="fas fa-stop-circle"></i></button>
+                <button id="slowerAudio"><i class="fas fa-chevron-circle-left"></i></button>
+                <button id="fasterAudio"><i class="fas fa-chevron-circle-right"></i></button>
                 <button><label for="fileinput"><i class="fas fa-plus-circle"></i></label></button>
 			</div>
 		</div>
@@ -57,7 +57,7 @@
 		<div id="waveform"></div>
 		<div id="wave-spectrogram"></div>
 
-		<script src="audio.js"></script>
+		<script src="audio.js" type="module"></script>
 		<script>
             function drawSVGPaths(parentElement, timeMin, timeMax, timeDelay) {
                 let paths = $(parentElement).find('path');
@@ -89,10 +89,6 @@
             }
 			
             drawSVGPaths($('svg'), 1000, 1500, 50);
-        </script>
-        <script>
-            duration = 300;
-            init("scene", Math.floor(0.4 * duration * 10), Math.floor(duration * 10), 0.05, false);
         </script>
     </body>
 </html>

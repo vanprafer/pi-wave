@@ -1,3 +1,5 @@
+import init from "./modelado.js";
+
 // Inicializacion de libreria
 
 var wavesurfer = WaveSurfer.create({
@@ -138,21 +140,21 @@ $("#fileinput")[0].onchange = function () {
 // CONTROLES DE AUDIO
 // -----------------------------------------------------------------------------------------------------------
 
-function playAudio() {
+export function playAudio() {
   audio.play();
 } 
 
-function stopAudio() {
+export function stopAudio() {
   audio.pause();
 }
 
-function restartAudio() {
+export function restartAudio() {
   audio.currentTime = 0;
   audio.playbackRate = 1;
   stopAudio();
 }
 
-function songProgress() {
+export default function songProgress() {
   if(audio) {
     return Math.min(audio.currentTime/duration, 1);
   } else { // Cuando no hay canción, el valor del songProgress siempre es cero
@@ -160,10 +162,20 @@ function songProgress() {
   }
 }
 
-function fasterAudio() {
+export function fasterAudio() {
   audio.playbackRate = Math.min(audio.playbackRate + 0.25, 4);
 }
 
-function slowerAudio() {
+export function slowerAudio() {
   audio.playbackRate = Math.max(audio.playbackRate - 0.25, 0.25);
 }
+
+$("#playAudio")[0].onclick = playAudio;
+$("#pauseAudio")[0].onclick = stopAudio;
+$("#restartAudio")[0].onclick = restartAudio;
+$("#fasterAudio")[0].onclick = fasterAudio;
+$("#slowerAudio")[0].onclick = slowerAudio;
+
+
+
+
