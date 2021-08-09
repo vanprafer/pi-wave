@@ -94,7 +94,6 @@ export default function init(id, l, nDiv, vel, spect) {
         astronaut.animations.forEach(function(frame) {
             movement.clipAction(frame).play();
         }); 
-        console.log(astronaut);
     }
 
     // Se posiciona y apunta la cámara al centro de la escena
@@ -132,15 +131,12 @@ export default function init(id, l, nDiv, vel, spect) {
         y = imgSpect.getBoundingClientRect().width;  
     }, 0); 
 
-    let number = 0;
-
     // Se renderiza la escena
     function render() {
         plane.position.x = l/2 - songProgress()*l;
         moon.rotation.y += 0.0005;
 
-        number += 0.05;
-        astronaut.scene.position.y = Math.cos(number)/2 + 5;
+        astronaut.scene.position.y = Math.cos(clock.getElapsedTime())/2 + 5;
 
         imgSpect.style.marginLeft = (x/2 - y*songProgress()) + "px";
 
