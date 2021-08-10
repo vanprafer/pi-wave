@@ -63,6 +63,10 @@ function astronautPath(arrayOfPondMeans, width) {
     return path;
 }
 
+function randomBetween(min, max) {
+    return (max-min)*Math.random()+min;
+}
+
 export default function init(id, l, nDiv, vel, spect) {
     while(scene.children.length > 0){ 
         scene.remove(scene.children[0]); 
@@ -131,6 +135,39 @@ export default function init(id, l, nDiv, vel, spect) {
     moon.position.y = 4;
 
     scene.add(moon);
+
+    // Stars
+    let cubeGeometry = new THREE.BoxGeometry(150, 100, 200); //x,y,z
+    let cubeMaterial = new THREE.MeshBasicMaterial( {color: 0x00ff00, fog: false} );
+    let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+    cube.position.x = 170;
+    cube.position.y = 4;
+
+    //scene.add(cube);
+
+    let xStarMin = 170-(150/2);
+    let xStarMax = 170+(150/2);
+    let yStarMin = 4-(100/2);
+    let yStarMax = 4+(100/2);    
+    let zStarMin = -200/2;
+    let zStarMax = 200/2;
+
+    let colorStars = [0xffffff, 0xfeffc4, 0xffd1c4, 0xc4deff, 0xe5c4ff];
+
+    for(let i=0; i<2000; i++) {
+
+        let starGeometry = new THREE.SphereGeometry(randomBetween(0.05, 0.3), 3, 3);
+        let starMaterial = new THREE.MeshBasicMaterial( {color: colorStars[Math.floor(randomBetween(0, 4))], fog: false} );
+        let star = new THREE.Mesh(starGeometry, starMaterial);
+
+        star.position.x = randomBetween(xStarMin, xStarMax);
+        star.position.y = randomBetween(yStarMin, yStarMax);
+        star.position.z = randomBetween(zStarMin, zStarMax);
+
+        scene.add(star);
+    }
+
 
     // Se añade el astronauta a la escena
     if(astronaut) {
