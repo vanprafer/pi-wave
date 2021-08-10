@@ -21,6 +21,48 @@ function createMountain(plane, x, y, z) {
     plane.attributes.position.array[3 * (x * h + y) + 2] = z;
 }
 
+function ponderatedMean(spect, x, nDiv) {
+    let pondSum = 0;
+    let denominator = 0;
+    for(let y=0; y < 51; y++) {
+        let value = 255 - spect.data[(y * ((nDiv + 1) * 4)) + (x * 4)];
+        pondSum += y*value;
+        denominator += value;
+    }
+    if(!denominator) {
+        return 0;
+    } 
+    return pondSum/denominator;
+}
+
+function arrayOfPonderatedMeans(spect, nDiv) {
+    let arrayOfPondMeans = [];
+    for(let x=0; x < nDiv+1; x++) {
+        arrayOfPondMeans.push(ponderatedMean(spect, x, nDiv));
+    }
+    return arrayOfPondMeans;
+}
+
+function windowPonderatedMean(arrayOfPondMeans, width, position) {
+    let window = 0;
+    for(let i=0; i<width; i++) {
+        if(i+position >= arrayOfPondMeans.length) {
+            window += arrayOfPondMeans[arrayOfPondMeans.length-1];
+        } else {
+            window += arrayOfPondMeans[i+position];
+        }
+    }
+    return window/width;
+}
+
+function astronautPath(arrayOfPondMeans, width) {
+    let path = [];
+    for(let j=0; j<arrayOfPondMeans.length; j++) {
+        path.push(windowPonderatedMean(arrayOfPondMeans, width, j));
+    }
+    return path;
+}
+
 export default function init(id, l, nDiv, vel, spect) {
     while(scene.children.length > 0){ 
         scene.remove(scene.children[0]); 
@@ -40,6 +82,8 @@ export default function init(id, l, nDiv, vel, spect) {
         polygonOffsetFactor: 1, 
         polygonOffsetUnits: 1
     }); // Para los puntos de luz
+
+    var path;
     
     // Si hay espectrograma, crea relieve
     if(spect) { // array en js es true si lleva elementos dentro (truthy)
@@ -52,6 +96,11 @@ export default function init(id, l, nDiv, vel, spect) {
         }
         planeGeometry.computeFaceNormals();
         planeGeometry.computeVertexNormals();
+
+        // Movimiento de izq a der del astronauta
+        let arrayOfPondMeans = arrayOfPonderatedMeans(spect, nDiv);
+        path = astronautPath(arrayOfPondMeans, 5);
+        console.log(arrayOfPondMeans);
     }
     
     var plane = new THREE.Mesh(planeGeometry,planeMaterial);
@@ -97,7 +146,7 @@ export default function init(id, l, nDiv, vel, spect) {
     }
 
     // Se posiciona y apunta la cámara al centro de la escena
-    camera.position.x = -14;
+    camera.position.x = -12;
     camera.position.y = 4;
     camera.position.z = 0;
     camera.lookAt(l,0,0);
@@ -136,7 +185,16 @@ export default function init(id, l, nDiv, vel, spect) {
         plane.position.x = l/2 - songProgress()*l;
         moon.rotation.y += 0.0005;
 
-        astronaut.scene.position.y = Math.cos(clock.getElapsedTime())/2 + 5;
+        astronaut.scene.position.y = Math.cos(clock.elapsedTime)/2 + 5;
+
+        if(path) {
+            let currentPosition = (path.length-1)*songProgress();
+            let prevPoint = (path[Math.floor(currentPosition)] - 25.5)*0.4;
+            let nextPoint = (path[Math.ceil(currentPosition)] - 25.5)*0.4;
+            let prc = currentPosition - Math.floor(currentPosition);
+            let progressAstronaut = Math.min(prevPoint, nextPoint) + prc * Math.abs(prevPoint - nextPoint);
+            astronaut.scene.position.z = astronaut.scene.position.z * 4 / 5 + progressAstronaut/5;
+        }
 
         imgSpect.style.marginLeft = (x/2 - y*songProgress()) + "px";
 
