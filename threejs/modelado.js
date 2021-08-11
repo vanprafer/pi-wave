@@ -67,6 +67,10 @@ function randomBetween(min, max) {
     return (max-min)*Math.random()+min;
 }
 
+function distance(x1, y1, z1, x2, y2, z2) {
+    return Math.sqrt(Math.pow(x1-x2, 2) + Math.pow(y1-y2, 2) + Math.pow(z1-z2, 2))
+}
+
 export default function init(id, l, nDiv, vel, spect) {
     while(scene.children.length > 0){ 
         scene.remove(scene.children[0]); 
@@ -114,7 +118,7 @@ export default function init(id, l, nDiv, vel, spect) {
     let wireframe = new THREE.LineSegments(wireframeGeometry, wireframeMaterial);
 
     plane.add(wireframe);
-    scene.fog = new THREE.FogExp2(new THREE.Color(0x1f1f1f), 0.03)
+    scene.fog = new THREE.FogExp2(new THREE.Color(0x1f1f1f), 0.05)
 
     plane.receiveShadow = true; // El plano recibe sombras
 
@@ -127,24 +131,80 @@ export default function init(id, l, nDiv, vel, spect) {
     scene.add(plane);
 
     // Luna
-    let moonGeometry = new THREE.SphereGeometry(20, 30, 30);
-    let moonMaterial = new THREE.MeshBasicMaterial({color: 0x5d005c, wireframe: true, fog: false});
+    let moonGeometry = new THREE.SphereGeometry(20, 100, 100);
+    let moonMaterial = new THREE.MeshBasicMaterial({
+        color: 0x29180e, 
+        vertexColors: true,
+        fog: false,
+        polygonOffset: true,
+        polygonOffsetFactor: 1, 
+        polygonOffsetUnits: 1
+    });
+    
+    let colors = [];
+
+    for (let i = 0, n = moonGeometry.attributes.position.count; i < n; ++ i) {
+        colors.push(1,1,1);
+    }       
+    moonGeometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+
+
+    //// Como el centro de la esfera es (0,0,0), no hace falta calcular los vectores, porque se corresponden con los puntos finales
+    for(let i=0; i<moonGeometry.attributes.position.array.length; i+=3) {
+        let xMoon = moonGeometry.attributes.position.array[i]/10;
+        let yMoon = moonGeometry.attributes.position.array[i+1]/10;
+        let zMoon = moonGeometry.attributes.position.array[i+2]/10;
+        moonGeometry.attributes.position.array[i] *= 1 + noise.simplex3(xMoon, yMoon, zMoon)/10;
+        moonGeometry.attributes.position.array[i+1] *= 1 + noise.simplex3(xMoon, yMoon, zMoon)/10;
+        moonGeometry.attributes.position.array[i+2] *= 1 + noise.simplex3(xMoon, yMoon, zMoon)/10;
+    }
+
+    //// Crea cráteres
+    for(let crater=0; crater<30; crater++) {
+        let multiple3 = Math.floor(randomBetween(0, moonGeometry.attributes.position.array.length-1));
+        multiple3 -= multiple3%3; 
+
+        let radius = randomBetween(2, 5);
+        let centerX = moonGeometry.attributes.position.array[multiple3];
+        let centerY = moonGeometry.attributes.position.array[multiple3+1];
+        let centerZ = moonGeometry.attributes.position.array[multiple3+2];
+
+        // Busca los puntos a los que le ha afectado el cráter y los baja 0.9
+        for(let i=0; i<moonGeometry.attributes.position.array.length; i+=3) {
+            let xMoon = moonGeometry.attributes.position.array[i];
+            let yMoon = moonGeometry.attributes.position.array[i+1];
+            let zMoon = moonGeometry.attributes.position.array[i+2];
+            
+            if(distance(xMoon, yMoon, zMoon, centerX, centerY, centerZ) <= radius) {
+                // Hundimiento
+                moonGeometry.attributes.position.array[i] *= 0.9;
+                moonGeometry.attributes.position.array[i+1] *= 0.9;
+                moonGeometry.attributes.position.array[i+2] *= 0.9;
+                // Color
+                moonGeometry.attributes.color.array[i] *= 0.7;
+                moonGeometry.attributes.color.array[i+1] *= 0.7;
+                moonGeometry.attributes.color.array[i+2] *= 0.7;
+            }
+        }
+    }
+
+
     let moon = new THREE.Mesh(moonGeometry, moonMaterial);
     
-    moon.position.x = 50;
+    moon.position.x = 55;
     moon.position.y = 4;
+
+    console.log(moon.geometry.attributes);
 
     scene.add(moon);
 
+    let wireframeMoonGeometry = new THREE.WireframeGeometry(moonGeometry);
+    let wireframeMoonMaterial = new THREE.LineBasicMaterial({color: 0x422616, fog:false});
+    let wireframeMoon = new THREE.LineSegments(wireframeMoonGeometry, wireframeMoonMaterial);
+
+    moon.add(wireframeMoon);
+
     // Stars
-    let cubeGeometry = new THREE.BoxGeometry(150, 100, 200); //x,y,z
-    let cubeMaterial = new THREE.MeshBasicMaterial( {color: 0x00ff00, fog: false} );
-    let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-
-    cube.position.x = 170;
-    cube.position.y = 4;
-
-    //scene.add(cube);
 
     let xStarMin = 170-(150/2);
     let xStarMax = 170+(150/2);
@@ -189,7 +249,7 @@ export default function init(id, l, nDiv, vel, spect) {
     camera.lookAt(l,0,0);
 
     // Añadimos spotlights para las sombras
-    var spotLight = new THREE.SpotLight(0xffffff, 0.8);
+    let spotLight = new THREE.SpotLight(0xffffff, 0.8);
     spotLight.position.set(-40,60,-10);
     spotLight.castShadow = true;
 
@@ -220,7 +280,7 @@ export default function init(id, l, nDiv, vel, spect) {
     // Se renderiza la escena
     function render() {
         plane.position.x = l/2 - songProgress()*l;
-        moon.rotation.y += 0.0005;
+        moon.rotation.y += 0.005;
 
         astronaut.scene.position.y = Math.cos(clock.elapsedTime)/2 + 5;
 
@@ -231,6 +291,14 @@ export default function init(id, l, nDiv, vel, spect) {
             let prc = currentPosition - Math.floor(currentPosition);
             let progressAstronaut = Math.min(prevPoint, nextPoint) + prc * Math.abs(prevPoint - nextPoint);
             astronaut.scene.position.z = astronaut.scene.position.z * 4 / 5 + progressAstronaut/5;
+        }
+
+        if(!x || !y) {
+            //Espera a que el espectrograma se cargue y luego lo mide
+            setTimeout(function() {
+                x = imgArea.getBoundingClientRect().width;
+                y = imgSpect.getBoundingClientRect().width;  
+            }, 0); 
         }
 
         imgSpect.style.marginLeft = (x/2 - y*songProgress()) + "px";
