@@ -279,8 +279,10 @@ export default function init(id, l, nDiv, vel, spect) {
 
     // Se renderiza la escena
     function render() {
+        let delta = clock.getDelta();
+
         plane.position.x = l/2 - songProgress()*l;
-        moon.rotation.y += 0.005;
+        moon.rotation.y += delta/10;
 
         astronaut.scene.position.y = Math.cos(clock.elapsedTime)/2 + 5;
 
@@ -304,7 +306,6 @@ export default function init(id, l, nDiv, vel, spect) {
         imgSpect.style.marginLeft = (x/2 - y*songProgress()) + "px";
 
         requestAnimationFrame(render);
-        var delta = clock.getDelta();
   
         movement.update(delta);
         renderer.render(scene, camera);
