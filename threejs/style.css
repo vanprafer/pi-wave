@@ -141,3 +141,10 @@ body {
     display: none;
 }
 
+.copyright {
+    font-family: "future_n0t_foundregular";
+    color: whitesmoke;
+    position: absolute;
+    bottom: 1em;
+    left: 1em;
+}

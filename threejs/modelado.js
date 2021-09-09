@@ -21,6 +21,7 @@ function createMountain(plane, x, y, z) {
     plane.attributes.position.array[3 * (x * h + y) + 2] = z;
 }
 
+// Media ponderada
 function ponderatedMean(spect, x, nDiv) {
     let pondSum = 0;
     let denominator = 0;
@@ -35,6 +36,7 @@ function ponderatedMean(spect, x, nDiv) {
     return pondSum/denominator;
 }
 
+// Array de las medias ponderadas
 function arrayOfPonderatedMeans(spect, nDiv) {
     let arrayOfPondMeans = [];
     for(let x=0; x < nDiv+1; x++) {
@@ -43,6 +45,7 @@ function arrayOfPonderatedMeans(spect, nDiv) {
     return arrayOfPondMeans;
 }
 
+// Calculador de una ventana
 function windowPonderatedMean(arrayOfPondMeans, width, position) {
     let window = 0;
     for(let i=0; i<width; i++) {
@@ -55,6 +58,7 @@ function windowPonderatedMean(arrayOfPondMeans, width, position) {
     return window/width;
 }
 
+// Array de ventanas 
 function astronautPath(arrayOfPondMeans, width) {
     let path = [];
     for(let j=0; j<arrayOfPondMeans.length; j++) {
